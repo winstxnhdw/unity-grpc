@@ -17,7 +17,6 @@ using Grpc.Core;
 using UnityEngine;
 using static RoadGeneratorService;
 
-[DisallowMultipleComponent]
 public class RoadGenerator : MonoBehaviour {
     GrpcChannel Channel { get; set; }
     RoadGeneratorServiceClient Client { get; set; }
@@ -39,11 +38,7 @@ public class RoadGenerator : MonoBehaviour {
     void Update() {
         ExceptionHandler.Handle<RpcException>("Server not found. Please start the server before entering play mode.", () => {
             GeneratedRoadResponse response = this.Client.Update(new GeneratedRoadRequest());
-
-            this.GenerateRoadMesh(
-                response.X.AsParallel(),
-                response.Z.AsParallel()
-            );
+            this.GenerateRoadMesh(response.X, response.Z);
         }, out bool isError);
 
         if (isError) {
